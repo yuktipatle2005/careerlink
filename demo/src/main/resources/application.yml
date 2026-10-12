@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: career-link
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  thymeleaf:
+    cache: false
+
+  # Multipart File Upload Configuration
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+  # Mail Configuration (Defaults to Mailtrap sandbox; overridable via environment variables)
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME:dev_user}
+    password: ${MAIL_PASSWORD:dev_password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# File Storage Configuration
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:uploads/resumes}
+
+# Application Email Settings
+app:
+  mail:
+    from: ${APP_MAIL_FROM:no-reply@careerlink.com}
+    from-name: CareerLink Hiring Team
+    enabled: ${MAIL_ENABLED:true}
+
+# JWT (JSON Web Token) Security Settings
+jwt:
+  secret: ${JWT_SECRET:careerlink-enterprise-secret-key-that-is-at-least-256-bits-long-for-hmac-sha256-security}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}

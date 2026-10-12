@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Hiring Analytics & Metrics — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <!-- Header & Actions -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom gap-2">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h3 class="fw-bold mb-0">Hiring Funnel & Pipeline Analytics</h3>
+                <span class="badge bg-primary px-3 py-1" th:text="${hr.companyName}">TechCorp</span>
+            </div>
+            <p class="text-muted small mb-0">Track applicant flow, shortlist velocity, and interview conversion ratios</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/hr/applications/export-csv}" class="btn btn-outline-success btn-sm fw-semibold">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i>Export All CSV
+            </a>
+            <a th:href="@{/hr/dashboard}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="row g-3 mb-4">
+        <!-- Total Applications -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-primary border-4 h-100 bg-white">
+                <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold text-uppercase">Total Applicants</small>
+                        <h2 class="fw-bold mb-0 text-primary" th:text="${analytics.totalApplications}">0</h2>
+                        <small class="text-secondary" th:text="'Across ' + ${analytics.totalJobs} + ' Jobs'">Across 0 Jobs</small>
+                    </div>
+                    <div class="bg-primary-subtle text-primary p-3 rounded-circle fs-3">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shortlist Rate -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-warning border-4 h-100 bg-white">
+                <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold text-uppercase">Shortlist Rate</small>
+                        <h2 class="fw-bold mb-0 text-warning" th:text="${analytics.shortlistRate} + '%'">0%</h2>
+                        <small class="text-secondary" th:text="${analytics.shortlistedCount} + ' Candidates'">0 Candidates</small>
+                    </div>
+                    <div class="bg-warning-subtle text-warning p-3 rounded-circle fs-3">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interview Rate -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-info border-4 h-100 bg-white">
+                <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold text-uppercase">Interview Rate</small>
+                        <h2 class="fw-bold mb-0 text-info" th:text="${analytics.interviewRate} + '%'">0%</h2>
+                        <small class="text-secondary" th:text="${analytics.interviewCount} + ' Scheduled'">0 Scheduled</small>
+                    </div>
+                    <div class="bg-info-subtle text-info p-3 rounded-circle fs-3">
+                        <i class="bi bi-camera-video-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hire Rate -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-success border-4 h-100 bg-white">
+                <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold text-uppercase">Offer / Hire Rate</small>
+                        <h2 class="fw-bold mb-0 text-success" th:text="${analytics.hireRate} + '%'">0%</h2>
+                        <small class="text-secondary" th:text="${analytics.hiredCount} + ' Hired'">0 Hired</small>
+                    </div>
+                    <div class="bg-success-subtle text-success p-3 rounded-circle fs-3">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Candidate Hiring Funnel Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+        <h5 class="fw-bold mb-3"><i class="bi bi-funnel-fill text-primary me-2"></i>Candidate Hiring Funnel</h5>
+        <p class="text-muted small mb-4">Stage-by-stage progression of candidates through your hiring pipeline</p>
+
+        <!-- Stage 1: Applied -->
+        <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-bold mb-1">
+                <span>1. Applied (Top of Funnel)</span>
+                <span th:text="${analytics.totalApplications} + ' Applicants (100%)'">0 Applicants (100%)</span>
+            </div>
+            <div class="progress" style="height: 18px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;">100%</div>
+            </div>
+        </div>
+
+        <!-- Stage 2: Shortlisted -->
+        <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-bold mb-1">
+                <span>2. Profile Shortlisted</span>
+                <span th:text="${analytics.shortlistedCount} + ' Candidates (' + ${analytics.shortlistRate} + '%)'">0 Candidates (0%)</span>
+            </div>
+            <div class="progress" style="height: 18px;">
+                <div class="progress-bar bg-warning text-dark fw-bold" role="progressbar" 
+                     th:style="'width: ' + (${analytics.shortlistRate} > 0 ? ${analytics.shortlistRate} : 0) + '%;'"
+                     th:text="${analytics.shortlistRate} + '%'">0%</div>
+            </div>
+        </div>
+
+        <!-- Stage 3: Interview Scheduled -->
+        <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-bold mb-1">
+                <span>3. Interview Scheduled</span>
+                <span th:text="${analytics.interviewCount} + ' Interviews (' + ${analytics.interviewRate} + '%)'">0 Interviews (0%)</span>
+            </div>
+            <div class="progress" style="height: 18px;">
+                <div class="progress-bar bg-info text-dark fw-bold" role="progressbar" 
+                     th:style="'width: ' + (${analytics.interviewRate} > 0 ? ${analytics.interviewRate} : 0) + '%;'"
+                     th:text="${analytics.interviewRate} + '%'">0%</div>
+            </div>
+        </div>
+
+        <!-- Stage 4: Hired / Accepted -->
+        <div class="mb-2">
+            <div class="d-flex justify-content-between small fw-bold mb-1">
+                <span>4. Hired / Accepted (Offer Accepted)</span>
+                <span th:text="${analytics.hiredCount} + ' Hired (' + ${analytics.hireRate} + '%)'">0 Hired (0%)</span>
+            </div>
+            <div class="progress" style="height: 18px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     th:style="'width: ' + (${analytics.hireRate} > 0 ? ${analytics.hireRate} : 0) + '%;'"
+                     th:text="${analytics.hireRate} + '%'">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vacancy Performance Breakdown Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h5 class="fw-bold mb-0"><i class="bi bi-table text-primary me-2"></i>Job Vacancy Performance Table</h5>
+            <small class="text-muted" th:text="${#lists.size(analytics.jobPerformances)} + ' Jobs Registered'">0 Jobs Registered</small>
+        </div>
+
+        <div th:if="${#lists.isEmpty(analytics.jobPerformances)}" class="text-center py-4 text-muted">
+            No vacancies posted yet.
+        </div>
+
+        <div class="table-responsive" th:if="${not #lists.isEmpty(analytics.jobPerformances)}">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Category</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th class="text-center">Applicants</th>
+                        <th class="text-center">Shortlisted</th>
+                        <th class="text-center">Interviews</th>
+                        <th class="text-center">Hired</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="perf : ${analytics.jobPerformances}">
+                        <td>
+                            <strong class="text-dark" th:text="${perf.title}">Senior Java Developer</strong>
+                        </td>
+                        <td th:text="${perf.categoryName}">IT & Software</td>
+                        <td th:text="${perf.location}">Bangalore</td>
+                        <td>
+                            <span th:if="${perf.status.name() == 'APPROVED'}" class="badge bg-success-subtle text-success border border-success">Active</span>
+                            <span th:if="${perf.status.name() == 'CLOSED'}" class="badge bg-secondary-subtle text-secondary border">Closed</span>
+                            <span th:if="${perf.status.name() == 'PENDING'}" class="badge bg-warning-subtle text-warning border">Pending</span>
+                        </td>
+                        <td class="text-center fw-bold" th:text="${perf.applicantCount}">0</td>
+                        <td class="text-center text-warning fw-bold" th:text="${perf.shortlistedCount}">0</td>
+                        <td class="text-center text-info fw-bold" th:text="${perf.interviewCount}">0</td>
+                        <td class="text-center text-success fw-bold" th:text="${perf.hiredCount}">0</td>
+                        <td class="text-end">
+                            <div class="d-flex gap-1 justify-content-end">
+                                <a th:href="@{'/hr/jobs/' + ${perf.jobId} + '/applications'}" class="btn btn-outline-primary btn-sm" title="View Applicants">
+                                    <i class="bi bi-people-fill"></i>
+                                </a>
+                                <a th:href="@{'/hr/jobs/' + ${perf.jobId} + '/export-csv'}" class="btn btn-outline-success btn-sm" title="Download CSV">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

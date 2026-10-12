@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Post a Job — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <div>
+                    <h3 class="fw-bold mb-0">Create New Job Vacancy</h3>
+                    <p class="text-muted small mb-0">Publish an opening to find top talent for <strong th:text="${hr.companyName}">TechCorp</strong></p>
+                </div>
+                <a th:href="@{/hr/dashboard}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}">Error</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <form th:action="@{/hr/post-job}" method="post">
+
+                    <div class="row g-3">
+                        <!-- Job Title -->
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Job Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control" placeholder="e.g. Senior Backend Engineer" required>
+                        </div>
+
+                        <!-- Category Dropdown -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Job Category</label>
+                            <select name="categoryId" class="form-select">
+                                <option value="">Select Category</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Software</option>
+                            </select>
+                        </div>
+
+                        <!-- Job Type -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Employment Type <span class="text-danger">*</span></label>
+                            <select name="jobType" class="form-select" required>
+                                <option value="FULL_TIME">Full Time</option>
+                                <option value="PART_TIME">Part Time</option>
+                                <option value="REMOTE">Remote</option>
+                                <option value="INTERNSHIP">Internship</option>
+                            </select>
+                        </div>
+
+                        <!-- Experience Level -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Experience Level <span class="text-danger">*</span></label>
+                            <input type="text" name="experienceLevel" class="form-control" placeholder="e.g. 2 - 4 Years" required>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Location <span class="text-danger">*</span></label>
+                            <input type="text" name="location" class="form-control" placeholder="e.g. Bangalore / Remote" required>
+                        </div>
+
+                        <!-- Salary Min -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Annual Salary Min (₹)</label>
+                            <input type="number" name="salaryMin" class="form-control" placeholder="e.g. 600000" step="10000">
+                        </div>
+
+                        <!-- Salary Max -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Annual Salary Max (₹)</label>
+                            <input type="number" name="salaryMax" class="form-control" placeholder="e.g. 1200000" step="10000">
+                        </div>
+
+                        <!-- Qualification -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Required Qualification <span class="text-danger">*</span></label>
+                            <input type="text" name="qualification" class="form-control" placeholder="e.g. B.Tech / BCA / MCA" required>
+                        </div>
+
+                        <!-- Last Date to Apply -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Application Deadline</label>
+                            <input type="date" name="lastDate" class="form-control">
+                        </div>
+
+                        <!-- Skills Required -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Key Skills Required <span class="text-danger">*</span></label>
+                            <input type="text" name="skillsRequired" class="form-control" placeholder="e.g. Java, Spring Boot, MySQL, REST APIs, Git" required>
+                            <small class="text-muted">Separate skills with commas</small>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Job Description & Responsibilities <span class="text-danger">*</span></label>
+                            <textarea name="description" class="form-control" rows="5" placeholder="Outline day-to-day responsibilities, perks, and expectations..." required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top text-end">
+                        <a th:href="@{/hr/dashboard}" class="btn btn-light me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                            <i class="bi bi-send-check me-1"></i>Publish Job Opening
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+# ==============================================================================
+# CareerLink - Root .gitignore
+# ==============================================================================
+
+# Compiled binaries and build output
+target/
+demo/target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+demo.zip
+
+# Nested duplicate backup
+carrerlink/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE specific files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.code-workspace
+.project
+.classpath
+.settings/
+.springBeans
+.sts4-cache/
+.nb-gradle/
+/nbproject/private/
+
+# Runtime and uploaded user files
+uploads/
+demo/uploads/
+uploads/resumes/
+demo/uploads/resumes/
+*.log
+logs/
+
+# Operating system artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment variable secrets files
+.env
+.env.local
+.env.*.local

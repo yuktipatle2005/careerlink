@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Application Status Update — CareerLink</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #334155; }
+        .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .email-header { background: linear-gradient(135deg, #334155, #475569); color: white; padding: 30px; text-align: center; }
+        .email-header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        .email-body { padding: 30px; line-height: 1.6; }
+        .card-details { background-color: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #64748b; }
+        .btn-action { display: inline-block; background-color: #2563eb; color: #ffffff !important; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 15px; }
+        .email-footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>CareerLink</h1>
+        <p style="margin: 5px 0 0 0; opacity: 0.9;">Application Status Update</p>
+    </div>
+    <div class="email-body">
+        <h2>Hello, <span th:text="${candidateName}">Candidate</span>,</h2>
+        <p>There is a new update regarding your application:</p>
+
+        <div class="card-details">
+            <p style="margin: 0 0 8px 0;"><strong>Position:</strong> <span th:text="${jobTitle}">Software Engineer</span></p>
+            <p style="margin: 0 0 8px 0;"><strong>Company:</strong> <span th:text="${companyName}">TechCorp</span></p>
+            <p style="margin: 0;"><strong>New Status:</strong> <strong style="color: #2563eb;" th:text="${status}">SHORTLISTED</strong></p>
+        </div>
+
+        <p th:if="${status == 'SHORTLISTED'}">
+            ⭐ Your profile has stood out to the hiring team and you have been shortlisted for further evaluation. The recruiter may contact you soon to coordinate next steps.
+        </p>
+
+        <p th:if="${status == 'ACCEPTED'}">
+            🎉 Congratulations! The employer has extended an offer or accepted your application for this position! Check your dashboard or email for further onboarding communications.
+        </p>
+
+        <p th:if="${status == 'REJECTED'}">
+            Thank you for taking the time to apply. After careful evaluation, the hiring team has decided to move forward with other candidates whose profiles more closely match their requirements at this moment. We encourage you to keep exploring open positions on CareerLink.
+        </p>
+
+        <p style="text-align: center;">
+            <a href="http://localhost:8080/candidate/applications" class="btn-action">Check Applications in Portal</a>
+        </p>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #64748b;">Best regards,<br><strong>CareerLink Support Team</strong></p>
+    </div>
+    <div class="email-footer">
+        &copy; 2026 CareerLink. All rights reserved.
+    </div>
+</div>
+</body>
+</html>

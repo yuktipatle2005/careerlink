@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Job Posts — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-0">Manage Job Posts</h3>
+            <p class="text-muted small mb-0">View, close, or review candidates for openings at <strong th:text="${hr.companyName}">TechCorp</strong></p>
+        </div>
+        <a th:href="@{/hr/post-job}" class="btn btn-primary fw-semibold btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>Post Another Job
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${success}">Success</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(jobs)}" class="card border-0 shadow-sm rounded-4 text-center py-5">
+        <i class="bi bi-briefcase text-muted fs-1 mb-2"></i>
+        <h4 class="text-muted">No Job Postings Yet</h4>
+        <p class="text-secondary small">Start hiring by publishing your first vacancy.</p>
+        <a th:href="@{/hr/post-job}" class="btn btn-primary btn-sm mx-auto">Create Job Vacancy</a>
+    </div>
+
+    <!-- Jobs Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-3" th:if="${not #lists.isEmpty(jobs)}">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="job : ${jobs}">
+                        <td>
+                            <h6 class="fw-bold mb-0" th:text="${job.title}">Senior Java Developer</h6>
+                            <small class="text-muted" th:text="'Exp: ' + ${job.experienceLevel}">Exp: 3 Years</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-primary border" th:text="${job.category != null ? job.category.name : 'General'}">Software</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info-subtle text-info-emphasis" th:text="${job.jobType}">FULL_TIME</span>
+                        </td>
+                        <td th:text="${job.location}">Bangalore</td>
+                        <td>
+                            <span th:if="${job.status.name() == 'APPROVED'}" class="badge bg-success">Active</span>
+                            <span th:if="${job.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                            <span th:if="${job.status.name() == 'CLOSED'}" class="badge bg-secondary">Closed</span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-inline-flex gap-2">
+                                <!-- View Applicants -->
+                                <a th:href="@{'/hr/jobs/' + ${job.id} + '/applications'}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-people-fill me-1"></i>Applicants
+                                </a>
+
+                                <!-- Close Job Toggle -->
+                                <form th:if="${job.status.name() == 'APPROVED'}" th:action="@{'/hr/jobs/' + ${job.id} + '/status'}" method="post">
+                                    <input type="hidden" name="status" value="CLOSED">
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Close vacancy">
+                                        <i class="bi bi-pause-circle me-1"></i>Close
+                                    </button>
+                                </form>
+
+                                <!-- Reopen Job Toggle -->
+                                <form th:if="${job.status.name() == 'CLOSED'}" th:action="@{'/hr/jobs/' + ${job.id} + '/status'}" method="post">
+                                    <input type="hidden" name="status" value="APPROVED">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Reopen vacancy">
+                                        <i class="bi bi-play-circle me-1"></i>Reopen
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

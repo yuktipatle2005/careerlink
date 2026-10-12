@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Candidate Dashboard — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <!-- Welcome Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1">
+                Hello, <span class="text-primary" th:text="${candidate.name != null ? candidate.name : 'Candidate'}">John Doe</span>! 👋
+            </h2>
+            <p class="text-muted mb-0">Track your job applications, interview schedules, and saved vacancies.</p>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a th:href="@{/candidate/notifications}" class="btn btn-outline-secondary position-relative">
+                <i class="bi bi-bell me-1"></i>Notifications
+                <span th:if="${unreadNotificationCount > 0}" 
+                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                      th:text="${unreadNotificationCount}">1</span>
+            </a>
+            <a th:href="@{/}" class="btn btn-outline-primary">
+                <i class="bi bi-search me-1"></i>Browse Jobs
+            </a>
+            <a th:href="@{/candidate/profile}" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i>Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Overview Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-primary border-4 h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">Jobs Applied</h6>
+                        <h2 class="fw-bold mb-0 text-primary" th:text="${totalApplications}">0</h2>
+                    </div>
+                    <div class="bg-primary-subtle text-primary p-3 rounded-circle fs-3">
+                        <i class="bi bi-send-fill"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a th:href="@{/candidate/applications}" class="small text-decoration-none fw-semibold">View Applications ➔</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-warning border-4 h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">Interviews Scheduled</h6>
+                        <h2 class="fw-bold mb-0 text-warning" th:text="${interviewCount}">0</h2>
+                    </div>
+                    <div class="bg-warning-subtle text-warning p-3 rounded-circle fs-3">
+                        <i class="bi bi-camera-video-fill"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <span class="small text-muted">Stay prepared for meeting calls</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-info border-4 h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">Saved Bookmarks</h6>
+                        <h2 class="fw-bold mb-0 text-info" th:text="${totalSavedJobs}">0</h2>
+                    </div>
+                    <div class="bg-info-subtle text-info p-3 rounded-circle fs-3">
+                        <i class="bi bi-bookmark-heart-fill"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a th:href="@{/candidate/saved-jobs}" class="small text-decoration-none fw-semibold">View Saved Jobs ➔</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheduled Interviews Section (If Any) -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 border-top border-warning border-4" 
+         th:if="${not #lists.isEmpty(scheduledInterviews)}">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-1 text-dark">
+                    <i class="bi bi-calendar-check-fill text-warning me-2"></i>Upcoming Scheduled Interviews
+                </h4>
+                <p class="text-muted small mb-0">Interviews arranged with hiring managers</p>
+            </div>
+            <span class="badge bg-warning text-dark px-3 py-2 fw-semibold" 
+                  th:text="${#lists.size(scheduledInterviews)} + ' Interview(s)'">1 Interview</span>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-6" th:each="interview : ${scheduledInterviews}">
+                <div class="card border rounded-3 p-3 bg-light">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="fw-bold mb-1 text-primary" th:text="${interview.jobPost.title}">Senior Java Developer</h5>
+                            <h6 class="text-secondary small mb-0">
+                                <i class="bi bi-building me-1"></i>
+                                <span th:text="${interview.jobPost.hr != null ? interview.jobPost.hr.companyName : 'Tech Corp'}">Tech Partner Corp</span>
+                            </h6>
+                        </div>
+                        <span class="badge bg-success-subtle text-success border fw-semibold" th:text="${interview.interviewStatus}">SCHEDULED</span>
+                    </div>
+
+                    <div class="small my-2 bg-white p-2 rounded border">
+                        <i class="bi bi-calendar-event-fill text-primary me-2"></i>
+                        <strong th:text="${#temporals.format(interview.interviewDate, 'EEEE, dd MMMM yyyy, hh:mm a')}">Monday, 15 Oct 2026, 11:00 AM</strong>
+                    </div>
+
+                    <div class="small text-truncate mb-3">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <strong>Link / Venue: </strong>
+                        <span class="text-secondary" th:text="${interview.modeOrLink}">https://meet.google.com/xyz</span>
+                    </div>
+
+                    <div>
+                        <a th:if="${#strings.startsWith(interview.modeOrLink, 'http')}" 
+                           th:href="${interview.modeOrLink}" target="_blank" 
+                           class="btn btn-primary btn-sm w-100 fw-semibold">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Join Video Call
+                        </a>
+                        <span th:unless="${#strings.startsWith(interview.modeOrLink, 'http')}" 
+                              class="badge bg-secondary-subtle text-secondary-emphasis w-100 py-2">
+                            <i class="bi bi-building-check me-1"></i>In-Person Office Venue
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Applications Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Recent Applications</h4>
+            <a th:href="@{/candidate/applications}" class="btn btn-sm btn-outline-secondary">View All</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(recentApplications)}" class="text-center py-5">
+            <i class="bi bi-inbox text-muted fs-1 mb-2"></i>
+            <h5 class="text-muted">You haven't applied to any jobs yet.</h5>
+            <p class="text-secondary small">Explore open vacancies and submit your first application today!</p>
+            <a th:href="@{/}" class="btn btn-primary btn-sm mt-2">Find Jobs</a>
+        </div>
+
+        <div class="table-responsive" th:if="${not #lists.isEmpty(recentApplications)}">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="app : ${recentApplications}">
+                        <td>
+                            <strong class="text-dark" th:text="${app.jobPost.title}">Software Engineer</strong>
+                        </td>
+                        <td th:text="${app.jobPost.hr.companyName}">TechCorp</td>
+                        <td th:text="${#temporals.format(app.applyDate, 'dd MMM yyyy')}">09 Sep 2026</td>
+                        <td>
+                            <span th:if="${app.status.name() == 'APPLIED'}" class="badge bg-primary">Applied</span>
+                            <span th:if="${app.status.name() == 'SHORTLISTED'}" class="badge bg-warning text-dark">Shortlisted</span>
+                            <span th:if="${app.status.name() == 'INTERVIEW_SCHEDULED'}" class="badge bg-info text-dark">Interview Scheduled</span>
+                            <span th:if="${app.status.name() == 'ACCEPTED'}" class="badge bg-success">Accepted</span>
+                            <span th:if="${app.status.name() == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

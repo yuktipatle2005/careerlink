@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Moderate Jobs — Admin')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-0">Platform Job Moderation</h3>
+            <p class="text-muted small mb-0">Oversee all published vacancies across all registered companies</p>
+        </div>
+        <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Alert -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${success}">Success</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Jobs Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Category</th>
+                        <th>Location & Type</th>
+                        <th>Status</th>
+                        <th class="text-end">Moderation Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="job : ${jobs}">
+                        <td>
+                            <strong class="text-dark" th:text="${job.title}">Full Stack Dev</strong>
+                        </td>
+                        <td th:text="${job.hr.companyName}">TechCorp</td>
+                        <td>
+                            <span class="badge bg-light text-primary border" th:text="${job.category != null ? job.category.name : 'General'}">Software</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.location}">Bangalore</span>
+                            <small class="text-muted d-block" th:text="${job.jobType}">FULL_TIME</small>
+                        </td>
+                        <td>
+                            <span th:if="${job.status.name() == 'APPROVED'}" class="badge bg-success">Active</span>
+                            <span th:if="${job.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                            <span th:if="${job.status.name() == 'CLOSED'}" class="badge bg-secondary">Closed</span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-inline-flex gap-2">
+                                <!-- Approve Button -->
+                                <form th:if="${job.status.name() != 'APPROVED'}" 
+                                      th:action="@{'/admin/jobs/' + ${job.id} + '/status'}" method="post">
+                                    <input type="hidden" name="status" value="APPROVED">
+                                    <button type="submit" class="btn btn-sm btn-success fw-semibold">
+                                        <i class="bi bi-check-lg me-1"></i>Approve
+                                    </button>
+                                </form>
+
+                                <!-- Close / Suspend Button -->
+                                <form th:if="${job.status.name() == 'APPROVED'}" 
+                                      th:action="@{'/admin/jobs/' + ${job.id} + '/status'}" method="post">
+                                    <input type="hidden" name="status" value="CLOSED">
+                                    <button type="submit" class="btn btn-sm btn-outline-warning">
+                                        <i class="bi bi-pause-circle me-1"></i>Suspend
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

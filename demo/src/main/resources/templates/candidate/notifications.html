@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Notifications — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <!-- Top Header & Actions -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom flex-wrap gap-2">
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <h3 class="fw-bold mb-0">Notifications & Alerts</h3>
+                        <span th:if="${unreadCount > 0}" class="badge bg-danger rounded-pill" th:text="${unreadCount} + ' New'">1 New</span>
+                    </div>
+                    <p class="text-muted small mb-0">Real-time status updates on your applications, shortlists, and interviews</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <form th:if="${unreadCount > 0}" th:action="@{/candidate/notifications/mark-all-read}" method="post">
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-check2-all me-1"></i>Mark All as Read
+                        </button>
+                    </form>
+                    <a th:href="@{/candidate/dashboard}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success Alert -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${success}">Notifications updated!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(notifications)}" class="card border-0 shadow-sm rounded-4 text-center py-5 bg-white">
+                <div class="card-body">
+                    <i class="bi bi-bell-slash text-muted mb-3" style="font-size: 3rem;"></i>
+                    <h5 class="fw-bold text-dark">No Notifications Yet</h5>
+                    <p class="text-secondary small mb-0">When employers review your profile, shortlist your applications, or schedule interviews, alerts will appear here.</p>
+                </div>
+            </div>
+
+            <!-- Notification Items List -->
+            <div class="d-flex flex-column gap-3" th:if="${not #lists.isEmpty(notifications)}">
+                <div th:each="n : ${notifications}" 
+                     th:class="'card border-0 shadow-sm rounded-4 p-3 ' + (${!n.isRead} ? 'bg-white border-start border-primary border-4' : 'bg-light opacity-75')">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div class="d-flex align-items-start gap-3">
+                            <!-- Icon Indicator -->
+                            <div th:class="'p-2 rounded-circle fs-5 ' + (${!n.isRead} ? 'bg-primary-subtle text-primary' : 'bg-secondary-subtle text-secondary')">
+                                <i class="bi bi-bell-fill"></i>
+                            </div>
+
+                            <div>
+                                <p class="mb-1 fw-medium text-dark" th:text="${n.message}">
+                                    Notification message content...
+                                </p>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>
+                                    <span th:text="${#temporals.format(n.createdAt, 'dd MMM yyyy, hh:mm a')}">10 Oct 2026, 03:00 PM</span>
+                                </small>
+                                <span th:if="${!n.isRead}" class="badge bg-primary ms-2">Unread</span>
+                            </div>
+                        </div>
+
+                        <!-- Mark as Read Button (Single) -->
+                        <div th:if="${!n.isRead}">
+                            <form th:action="@{'/candidate/notifications/' + ${n.id} + '/read'}" method="post">
+                                <button type="submit" class="btn btn-sm btn-link text-decoration-none text-muted p-0" title="Mark as Read">
+                                    <i class="bi bi-check2 fs-5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

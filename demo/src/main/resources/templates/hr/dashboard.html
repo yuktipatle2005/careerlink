@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('HR Dashboard — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <!-- Header & Company Info -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h2 class="fw-bold mb-0" th:text="${hr.companyName}">TechCorp Innovations</h2>
+                <span th:if="${hr.approvalStatus.name() == 'APPROVED'}" class="badge bg-success-subtle text-success border border-success px-2 py-1 small">
+                    <i class="bi bi-patch-check-fill me-1"></i>Verified Employer
+                </span>
+                <span th:if="${hr.approvalStatus.name() == 'PENDING'}" class="badge bg-warning-subtle text-warning border border-warning px-2 py-1 small">
+                    <i class="bi bi-clock-history me-1"></i>Pending Admin Approval
+                </span>
+            </div>
+            <p class="text-muted mb-0">Recruiter: <strong th:text="${hr.hrName}">Sarah Jenkins</strong> | Recruitment Analytics & Pipeline</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+            <a th:href="@{/hr/analytics}" class="btn btn-outline-primary fw-semibold">
+                <i class="bi bi-graph-up me-1"></i>Analytics & Funnel
+            </a>
+            <a th:href="@{/hr/applications/export-csv}" class="btn btn-outline-success fw-semibold">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i>Export All CSV
+            </a>
+            <a th:href="@{/hr/post-job}" class="btn btn-primary fw-semibold">
+                <i class="bi bi-plus-circle-fill me-1"></i>Post New Job
+            </a>
+            <a th:href="@{/hr/my-jobs}" class="btn btn-outline-secondary">
+                <i class="bi bi-briefcase me-1"></i>Manage Jobs
+            </a>
+        </div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-primary border-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">Total Jobs</h6>
+                        <h2 class="fw-bold mb-0 text-primary" th:text="${totalJobs}">0</h2>
+                    </div>
+                    <div class="bg-primary-subtle text-primary p-3 rounded-circle fs-3">
+                        <i class="bi bi-briefcase-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-info border-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">Total Applicants</h6>
+                        <h2 class="fw-bold mb-0 text-info" th:text="${totalApplicants}">0</h2>
+                    </div>
+                    <div class="bg-info-subtle text-info p-3 rounded-circle fs-3">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-warning border-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">Shortlisted</h6>
+                        <h2 class="fw-bold mb-0 text-warning" th:text="${shortlistedCount}">0</h2>
+                    </div>
+                    <div class="bg-warning-subtle text-warning p-3 rounded-circle fs-3">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-success border-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">Interviews</h6>
+                        <h2 class="fw-bold mb-0 text-success" th:text="${interviewCount}">0</h2>
+                    </div>
+                    <div class="bg-success-subtle text-success p-3 rounded-circle fs-3">
+                        <i class="bi bi-camera-video-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Vacancies Table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Active Job Postings</h4>
+            <a th:href="@{/hr/my-jobs}" class="btn btn-sm btn-outline-secondary">View All</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(recentJobs)}" class="text-center py-5">
+            <i class="bi bi-briefcase text-muted fs-1 mb-2"></i>
+            <h5 class="text-muted">You haven't posted any jobs yet.</h5>
+            <p class="text-secondary small">Publish your first opening to start receiving qualified candidates!</p>
+            <a th:href="@{/hr/post-job}" class="btn btn-primary btn-sm mt-2">Post a Job</a>
+        </div>
+
+        <div class="table-responsive" th:if="${not #lists.isEmpty(recentJobs)}">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Category</th>
+                        <th>Type & Location</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="job : ${recentJobs}">
+                        <td>
+                            <strong class="text-dark" th:text="${job.title}">Senior Java Developer</strong>
+                        </td>
+                        <td th:text="${job.category != null ? job.category.name : 'General'}">Software</td>
+                        <td>
+                            <span class="badge bg-light text-dark border me-1" th:text="${job.jobType}">FULL_TIME</span>
+                            <small class="text-muted" th:text="${job.location}">Bangalore</small>
+                        </td>
+                        <td>
+                            <span th:if="${job.status.name() == 'APPROVED'}" class="badge bg-success">Active</span>
+                            <span th:if="${job.status.name() == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                            <span th:if="${job.status.name() == 'CLOSED'}" class="badge bg-secondary">Closed</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/hr/jobs/' + ${job.id} + '/applications'}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-people me-1"></i>View Applicants
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

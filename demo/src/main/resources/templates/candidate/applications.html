@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Applications — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-0">My Applications</h3>
+            <p class="text-muted small mb-0">Track the hiring progress of all your job submissions</p>
+        </div>
+        <a th:href="@{/}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-search me-1"></i>Find More Jobs
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${success}">Success</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${error}">Error</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(applications)}" class="card border-0 shadow-sm rounded-4 text-center py-5">
+        <i class="bi bi-folder2-open text-muted fs-1 mb-2"></i>
+        <h4 class="text-muted">No Applications Found</h4>
+        <p class="text-secondary small">You haven't submitted any job applications yet.</p>
+        <a th:href="@{/}" class="btn btn-primary btn-sm mx-auto">Browse Open Jobs</a>
+    </div>
+
+    <!-- Applications List -->
+    <div class="row g-3" th:if="${not #lists.isEmpty(applications)}">
+        <div class="col-12" th:each="app : ${applications}">
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="row align-items-center">
+                    <div class="col-md-5">
+                        <h5 class="fw-bold mb-1" th:text="${app.jobPost.title}">Full Stack Developer</h5>
+                        <h6 class="text-muted small mb-1">
+                            <i class="bi bi-building me-1"></i>
+                            <span th:text="${app.jobPost.hr.companyName}">TechCorp</span>
+                            &bull;
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <span th:text="${app.jobPost.location}">Bangalore</span>
+                        </h6>
+                        <small class="text-secondary d-block">
+                            Applied on: <span th:text="${#temporals.format(app.applyDate, 'dd MMM yyyy, hh:mm a')}">09 Sep 2026</span>
+                        </small>
+                        <div th:if="${app.resumePath != null && !app.resumePath.isBlank()}" class="mt-1">
+                            <a th:if="${#strings.startsWith(app.resumePath, 'http://') or #strings.startsWith(app.resumePath, 'https://')}" 
+                               th:href="${app.resumePath}" target="_blank" class="badge bg-light text-primary border text-decoration-none">
+                                <i class="bi bi-link-45deg me-1"></i>External Resume
+                            </a>
+                            <a th:unless="${#strings.startsWith(app.resumePath, 'http://') or #strings.startsWith(app.resumePath, 'https://')}" 
+                               th:href="@{'/files/resumes/' + ${app.resumePath}}" target="_blank" class="badge bg-light text-primary border text-decoration-none">
+                                <i class="bi bi-file-earmark-pdf-fill text-danger me-1"></i>Attached Resume
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 text-md-center my-2 my-md-0">
+                        <span th:if="${app.status.name() == 'APPLIED'}" class="badge bg-primary px-3 py-2 fs-6">
+                            <i class="bi bi-send me-1"></i>Applied
+                        </span>
+                        <span th:if="${app.status.name() == 'SHORTLISTED'}" class="badge bg-warning text-dark px-3 py-2 fs-6">
+                            <i class="bi bi-star-fill me-1"></i>Shortlisted
+                        </span>
+                        <span th:if="${app.status.name() == 'INTERVIEW_SCHEDULED'}" class="badge bg-info text-dark px-3 py-2 fs-6">
+                            <i class="bi bi-camera-video me-1"></i>Interview Scheduled
+                        </span>
+                        <span th:if="${app.status.name() == 'ACCEPTED'}" class="badge bg-success px-3 py-2 fs-6">
+                            <i class="bi bi-check-circle me-1"></i>Accepted
+                        </span>
+                        <span th:if="${app.status.name() == 'REJECTED'}" class="badge bg-danger px-3 py-2 fs-6">
+                            <i class="bi bi-x-circle me-1"></i>Rejected
+                        </span>
+                    </div>
+
+                    <div class="col-md-4 text-md-end">
+                        <div th:if="${app.interview != null}" class="bg-light p-2 rounded-3 border small text-start">
+                            <strong class="d-block text-primary"><i class="bi bi-calendar-event me-1"></i>Interview Details:</strong>
+                            <div>Date: <span th:text="${#temporals.format(app.interview.interviewDate, 'dd MMM yyyy, hh:mm a')}">15 Sep 2026</span></div>
+                            <div>Link/Venue: <span class="fw-semibold text-truncate" th:text="${app.interview.modeOrLink}">https://meet.google.com/xyz</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cover Note Accordion if provided -->
+                <div th:if="${app.coverNote != null && !app.coverNote.isBlank()}" class="mt-2 pt-2 border-top">
+                    <small class="text-muted fw-semibold">Cover Note: </small>
+                    <small class="text-secondary" th:text="${app.coverNote}">Looking forward to working with your team.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

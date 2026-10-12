@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Saved Jobs — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-0">Saved Jobs</h3>
+            <p class="text-muted small mb-0">Your bookmarked vacancies to review and apply anytime</p>
+        </div>
+        <a th:href="@{/}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-search me-1"></i>Find More Jobs
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${success}">Success</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${info}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <span th:text="${info}">Info</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(savedJobs)}" class="card border-0 shadow-sm rounded-4 text-center py-5">
+        <i class="bi bi-bookmark-x text-muted fs-1 mb-2"></i>
+        <h4 class="text-muted">No Saved Jobs</h4>
+        <p class="text-secondary small">You haven't bookmarked any jobs yet.</p>
+        <a th:href="@{/}" class="btn btn-primary btn-sm mx-auto">Explore Jobs</a>
+    </div>
+
+    <!-- Saved Jobs Grid -->
+    <div class="row g-4" th:if="${not #lists.isEmpty(savedJobs)}">
+        <div class="col-md-6 col-lg-4" th:each="saved : ${savedJobs}">
+            <div class="card h-100 job-card p-3">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="badge bg-light text-primary border mb-2" 
+                                  th:text="${saved.jobPost.category != null ? saved.jobPost.category.name : 'General'}">IT</span>
+                            <h5 class="card-title fw-bold mb-1" th:text="${saved.jobPost.title}">Job Title</h5>
+                            <h6 class="text-muted small mb-2">
+                                <i class="bi bi-building me-1"></i>
+                                <span th:text="${saved.jobPost.hr.companyName}">Company</span>
+                            </h6>
+                        </div>
+                    </div>
+
+                    <p class="card-text text-muted small flex-grow-1" 
+                       th:text="${#strings.abbreviate(saved.jobPost.description, 100)}">
+                        Job description snippet...
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-success fw-bold">
+                            <i class="bi bi-currency-rupee"></i>
+                            <span th:text="${saved.jobPost.salaryMin != null ? #numbers.formatDecimal(saved.jobPost.salaryMin, 0, 'COMMA', 0, 'POINT') : 'Best in Industry'}"></span>
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                            <span th:text="${saved.jobPost.location}">Location</span>
+                        </small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <!-- Apply Form -->
+                        <form th:action="@{/candidate/apply}" method="post" class="flex-grow-1">
+                            <input type="hidden" name="jobId" th:value="${saved.jobPost.id}">
+                            <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold">
+                                Apply Now
+                            </button>
+                        </form>
+
+                        <!-- Remove Bookmark Form -->
+                        <form th:action="@{'/candidate/remove-saved-job/' + ${saved.jobPost.id}}" method="post">
+                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Remove from bookmarks">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

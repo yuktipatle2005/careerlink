@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Job Categories — Admin')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-0">Job Category Management</h3>
+            <p class="text-muted small mb-0">Organize job industries and classification domains across CareerLink</p>
+        </div>
+        <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${success}">Success</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${error}">Error</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-4">
+        <!-- Add Category Form -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle text-primary me-2"></i>Add New Category</h5>
+                <form th:action="@{/admin/categories}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Category Name <span class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Finance & Accounting" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Bootstrap Icon Class</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="bi bi-tag"></i></span>
+                            <input type="text" name="icon" class="form-control" placeholder="e.g. bi-cash-coin, bi-hospital" value="bi-briefcase">
+                        </div>
+                        <small class="text-muted">Uses <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a> classes</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                        <i class="bi bi-check-lg me-1"></i>Create Category
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Categories List Grid -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold mb-3">Existing Categories (<span th:text="${#lists.size(categories)}">0</span>)</h5>
+                
+                <div class="row g-3">
+                    <div class="col-md-6" th:each="cat : ${categories}">
+                        <div class="card border rounded-3 p-3 h-100 bg-light-subtle">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-primary-subtle text-primary p-3 rounded-circle fs-4">
+                                    <i th:class="'bi ' + ${cat.icon}"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark" th:text="${cat.name}">Category Name</h6>
+                                    <small class="text-muted" th:text="${#lists.size(cat.jobPosts)} + ' Active Jobs'">0 Active Jobs</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Application Received — CareerLink</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #334155; }
+        .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .email-header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 30px; text-align: center; }
+        .email-header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        .email-body { padding: 30px; line-height: 1.6; }
+        .card-details { background-color: #f1f5f9; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #2563eb; }
+        .btn-action { display: inline-block; background-color: #2563eb; color: #ffffff !important; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 15px; }
+        .email-footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>CareerLink</h1>
+        <p style="margin: 5px 0 0 0; opacity: 0.9;">Application Submission Confirmation</p>
+    </div>
+    <div class="email-body">
+        <h2>Hello, <span th:text="${candidateName}">Candidate</span>! 👋</h2>
+        <p>Thank you for applying. We are pleased to confirm that your job application and resume have been submitted successfully to the hiring team.</p>
+
+        <div class="card-details">
+            <p style="margin: 0 0 8px 0;"><strong>Position:</strong> <span th:text="${jobTitle}">Software Engineer</span></p>
+            <p style="margin: 0 0 8px 0;"><strong>Company:</strong> <span th:text="${companyName}">Tech Partners Corp</span></p>
+            <p style="margin: 0;"><strong>Status:</strong> <span style="color: #2563eb; font-weight: 600;">APPLIED</span></p>
+        </div>
+
+        <p><strong>What happens next?</strong><br>
+        The hiring manager will review your qualifications and attached resume. If your profile matches their requirements, you will receive an invitation for an interview.</p>
+
+        <p style="text-align: center;">
+            <a href="http://localhost:8080/candidate/applications" class="btn-action">View Application Status</a>
+        </p>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #64748b;">Best regards,<br><strong>The CareerLink Recruitment Platform</strong></p>
+    </div>
+    <div class="email-footer">
+        &copy; 2026 CareerLink. All rights reserved.<br>
+        You are receiving this email because you applied for a job via CareerLink.
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head(${job.title} + ' — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<!-- Breadcrumb & Top Bar -->
+<div class="bg-white border-bottom py-3">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/(categoryId=${job.category != null ? job.category.id : null})}" 
+                                                   class="text-decoration-none" 
+                                                   th:text="${job.category != null ? job.category.name : 'Jobs'}">Category</a></li>
+                    <li class="breadcrumb-item active text-truncate" style="max-width: 280px;" aria-current="page" th:text="${job.title}">Job Title</li>
+                </ol>
+            </nav>
+            <a th:href="@{/}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> Back to All Jobs
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Success / Status Alerts -->
+<div class="container mt-3" th:if="${param.applied != null || param.saved != null || param.error != null}">
+    <div th:if="${param.applied}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> Application submitted successfully! The hiring manager has received your resume.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${param.saved}" class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-bookmark-check-fill me-2"></i> Job saved to your candidate bookmarks!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> Action could not be completed. Please try again.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+
+<!-- Main Job Detail Section -->
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Left Column: Job Overview & Description -->
+        <div class="col-lg-8">
+            <!-- Header Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                    <div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-3 py-1 mb-2"
+                              th:text="${job.category != null ? job.category.name : 'General'}">IT & Software</span>
+                        <h2 class="fw-bold mb-1" th:text="${job.title}">Senior Java Developer</h2>
+                        <h5 class="text-secondary mb-0">
+                            <i class="bi bi-building me-1"></i>
+                            <span th:text="${job.hr != null ? job.hr.companyName : 'Tech Partner Corp'}">Company Name</span>
+                        </h5>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-success-subtle text-success-emphasis fs-6 px-3 py-2 fw-semibold"
+                              th:text="${job.jobType}">FULL_TIME</span>
+                    </div>
+                </div>
+
+                <!-- Quick Highlights Grid -->
+                <div class="row g-3 py-3 border-top border-bottom my-2 bg-light rounded-3">
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block">Location</small>
+                        <span class="fw-semibold text-dark">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                            <span th:text="${job.location}">Bangalore</span>
+                        </span>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block">Offered Salary</small>
+                        <span class="fw-semibold text-success">
+                            <i class="bi bi-currency-rupee"></i>
+                            <span th:text="${job.salaryMin != null ? #numbers.formatDecimal(job.salaryMin, 0, 'COMMA', 0, 'POINT') : 'Negotiable'}">10,00,000</span>
+                            <span th:if="${job.salaryMax != null}"> - </span>
+                            <span th:if="${job.salaryMax != null}" th:text="${#numbers.formatDecimal(job.salaryMax, 0, 'COMMA', 0, 'POINT')}">18,00,000</span>
+                        </span>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block">Experience</small>
+                        <span class="fw-semibold text-dark">
+                            <i class="bi bi-briefcase me-1 text-primary"></i>
+                            <span th:text="${job.experienceLevel}">3 - 5 Years</span>
+                        </span>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block">Deadline</small>
+                        <span class="fw-semibold text-dark">
+                            <i class="bi bi-clock-history me-1 text-warning"></i>
+                            <span th:text="${job.lastDate != null ? #temporals.format(job.lastDate, 'dd MMM yyyy') : 'Open'}">30 Dec 2026</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between text-muted small mt-2">
+                    <span>
+                        <i class="bi bi-calendar-event me-1"></i> Posted on 
+                        <strong th:text="${#temporals.format(job.createdAt, 'dd MMMM yyyy')}">01 Jan 2026</strong>
+                    </span>
+                    <span>
+                        <span class="badge bg-light text-secondary border">Job ID #<span th:text="${job.id}">1</span></span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Role Description Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-file-earmark-text text-primary me-2"></i>Job Description</h4>
+                <div class="text-secondary lh-lg mb-4" style="white-space: pre-line;" th:text="${job.description}">
+                    Full job description goes here with comprehensive information regarding responsibilities, day-to-day work, and expectations.
+                </div>
+
+                <!-- Skills Required -->
+                <h5 class="fw-bold mb-3"><i class="bi bi-tools text-primary me-2"></i>Skills & Technologies Required</h5>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <span th:each="skill : ${#strings.arraySplit(job.skillsRequired, ',')}"
+                          class="badge bg-light text-dark border px-3 py-2 fs-6 rounded-pill">
+                        <i class="bi bi-check2 text-success me-1"></i>
+                        <span th:text="${#strings.trim(skill)}">Skill</span>
+                    </span>
+                </div>
+
+                <!-- Eligibility Requirements -->
+                <h5 class="fw-bold mb-3"><i class="bi bi-mortarboard text-primary me-2"></i>Education & Qualifications</h5>
+                <p class="text-secondary mb-0" th:text="${job.qualification}">
+                    B.Tech / B.E. / MCA in Computer Science or equivalent technical degree.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Column: Action Box & Company Info -->
+        <div class="col-lg-4">
+            <!-- Apply / Action Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 sticky-top" style="top: 85px; z-index: 10;">
+                <h5 class="fw-bold mb-3">Apply for this Position</h5>
+
+                <!-- Case 1: Anonymous / Guest -->
+                <div sec:authorize="isAnonymous()">
+                    <p class="text-muted small mb-3">
+                        Join CareerLink or sign in with your candidate account to submit your application directly.
+                    </p>
+                    <a th:href="@{/login}" class="btn btn-primary w-100 py-2 fw-semibold mb-2">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login to Apply
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-outline-secondary w-100 py-2 fw-semibold">
+                        <i class="bi bi-person-plus me-1"></i> Create Account
+                    </a>
+                </div>
+
+                <!-- Case 2: Candidate User -->
+                <div sec:authorize="hasRole('CANDIDATE')">
+                    <!-- If already applied -->
+                    <div th:if="${hasApplied}" class="alert alert-success d-flex align-items-center mb-3">
+                        <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+                        <div>
+                            <strong>Application Sent</strong>
+                            <div class="small">You have already submitted an application for this role.</div>
+                        </div>
+                    </div>
+
+                    <!-- If not yet applied: Direct Application Form -->
+                    <div th:unless="${hasApplied}">
+                        <form th:action="@{/candidate/apply}" method="post" enctype="multipart/form-data" class="mb-2">
+                            <input type="hidden" name="jobId" th:value="${job.id}">
+                            
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Cover Note (Optional)</label>
+                                <textarea name="coverNote" class="form-control form-control-sm" rows="3"
+                                          placeholder="Why are you a great fit for this position?"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Resume (Optional)</label>
+                                <input type="file" name="resumeFile" class="form-control form-control-sm" accept=".pdf">
+                                <div class="form-text small text-muted">
+                                    <i class="bi bi-file-earmark-pdf text-danger me-1"></i>Uses your profile resume by default.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-send-fill me-1"></i> Apply Now
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Bookmark Button -->
+                    <div class="mt-2">
+                        <div th:if="${isSaved}" class="badge bg-secondary-subtle text-secondary-emphasis w-100 py-2 text-center">
+                            <i class="bi bi-bookmark-check-fill me-1"></i> Saved in Your Bookmarks
+                        </div>
+                        <form th:unless="${isSaved}" th:action="@{'/candidate/save-job/' + ${job.id}}" method="post">
+                            <button type="submit" class="btn btn-outline-secondary w-100 py-2 fw-semibold">
+                                <i class="bi bi-bookmark-plus me-1"></i> Bookmark Job
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Case 3: HR / Admin -->
+                <div sec:authorize="hasAnyRole('HR', 'ADMIN')">
+                    <div class="alert alert-info small mb-0">
+                        <i class="bi bi-info-circle me-1"></i> You are viewing this listing in preview mode as an HR / Admin user.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Profile Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-building text-primary me-2"></i>About Company</h5>
+                <h6 class="fw-bold text-dark mb-1" th:text="${job.hr != null ? job.hr.companyName : 'Tech Corp'}">Company Name</h6>
+                <p class="text-muted small mb-3" th:text="${job.hr != null && job.hr.companyDescription != null ? job.hr.companyDescription : 'A leading technology organization providing modern engineering and cloud solutions.'}">
+                    Company description...
+                </p>
+
+                <div class="small text-secondary mb-2" th:if="${job.hr != null && job.hr.companyWebsite != null}">
+                    <i class="bi bi-globe me-1 text-primary"></i>
+                    <a th:href="${job.hr.companyWebsite}" target="_blank" rel="noopener noreferrer" 
+                       class="text-decoration-none fw-medium" th:text="${job.hr.companyWebsite}">
+                        https://example.com
+                    </a>
+                </div>
+
+                <div class="small text-secondary" th:if="${job.hr != null && job.hr.companyLocation != null}">
+                    <i class="bi bi-geo-alt me-1 text-danger"></i>
+                    <span th:text="${job.hr.companyLocation}">Headquarters</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Interview Invitation — CareerLink</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #334155; }
+        .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .email-header { background: linear-gradient(135deg, #0f766e, #0d9488); color: white; padding: 30px; text-align: center; }
+        .email-header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        .email-body { padding: 30px; line-height: 1.6; }
+        .card-details { background-color: #f0fdfa; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #0d9488; }
+        .btn-action { display: inline-block; background-color: #0d9488; color: #ffffff !important; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 15px; }
+        .email-footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>CareerLink</h1>
+        <p style="margin: 5px 0 0 0; opacity: 0.9;">Interview Scheduled! 📅</p>
+    </div>
+    <div class="email-body">
+        <h2>Great News, <span th:text="${candidateName}">Candidate</span>! 🎉</h2>
+        <p>Your application was reviewed and the hiring team has scheduled an interview with you!</p>
+
+        <div class="card-details">
+            <p style="margin: 0 0 8px 0;"><strong>Position:</strong> <span th:text="${jobTitle}">Senior Java Engineer</span></p>
+            <p style="margin: 0 0 8px 0;"><strong>Company:</strong> <span th:text="${companyName}">TechCorp</span></p>
+            <p style="margin: 0 0 8px 0;"><strong>Date & Time:</strong> <span style="color: #0f766e; font-weight: 700;" th:text="${formattedDateTime}">15 Oct 2026, 11:00 AM</span></p>
+            <p style="margin: 0;"><strong>Meeting / Venue:</strong> <span th:text="${meetingLink}">https://meet.google.com/xyz</span></p>
+        </div>
+
+        <p><strong>Tips for preparation:</strong></p>
+        <ul>
+            <li>Please ensure you test your microphone, camera, and internet connection ahead of time.</li>
+            <li>Review the job description and have a copy of your resume ready for reference.</li>
+        </ul>
+
+        <p style="text-align: center;" th:if="${#strings.startsWith(meetingLink, 'http')}">
+            <a th:href="${meetingLink}" class="btn-action">Join Meeting Room</a>
+        </p>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #64748b;">Best of luck with your interview!<br><strong>The CareerLink Recruitment Team</strong></p>
+    </div>
+    <div class="email-footer">
+        &copy; 2026 CareerLink. All rights reserved.<br>
+        Access your candidate dashboard at <a href="http://localhost:8080/candidate/dashboard" style="color: #0d9488;">CareerLink</a>.
+    </div>
+</div>
+</body>
+</html>

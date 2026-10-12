@@ -1,0 +1,59 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: careerlink-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: careerlink_db
+      MYSQL_USER: careerlink_user
+      MYSQL_PASSWORD: careerlink_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - careerlink-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: careerlink-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: careerlink_db
+      DB_USERNAME: careerlink_user
+      DB_PASSWORD: careerlink_pass
+      JWT_SECRET: careerlink-enterprise-production-super-secret-key-at-least-256-bits
+      JWT_EXPIRATION_MS: 86400000
+      FILE_UPLOAD_DIR: /app/uploads/resumes
+    ports:
+      - "8080:8080"
+    volumes:
+      - app_uploads:/app/uploads
+    networks:
+      - careerlink-net
+
+volumes:
+  mysql_data:
+    name: careerlink_mysql_data
+  app_uploads:
+    name: careerlink_app_uploads
+
+networks:
+  careerlink-net:
+    name: careerlink_network
+    driver: bridge

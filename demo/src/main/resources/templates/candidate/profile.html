@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Profile — CareerLink')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom flex-wrap gap-2">
+                <div>
+                    <h3 class="fw-bold mb-0">Candidate Profile & Resume</h3>
+                    <p class="text-muted small mb-0">Keep your resume and qualifications updated so recruiters can shortlist you</p>
+                </div>
+                <a th:href="@{/candidate/dashboard}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Success Alert -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${success}">Profile updated!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}">Upload failed</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <!-- IMPORTANT: enctype="multipart/form-data" required for file uploads -->
+                <form th:action="@{/candidate/profile}" method="post" enctype="multipart/form-data">
+
+                    <!-- Personal Information Section -->
+                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-person-lines-fill me-2"></i>Personal Details</h5>
+                    <div class="row g-3 mb-4">
+                        <!-- Full Name -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" th:value="${candidate.name}" required>
+                        </div>
+
+                        <!-- Mobile -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Mobile Number <span class="text-danger">*</span></label>
+                            <input type="tel" name="mobile" class="form-control" th:value="${candidate.mobile}" required>
+                        </div>
+
+                        <!-- Education -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Highest Education / Degree</label>
+                            <input type="text" name="education" class="form-control" 
+                                   placeholder="e.g. B.Tech in Computer Science, MCA, B.Sc" 
+                                   th:value="${candidate.education}">
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Technical Skills</label>
+                            <input type="text" name="skills" class="form-control" 
+                                   placeholder="e.g. Java, Spring Boot, React, SQL, Docker" 
+                                   th:value="${candidate.skills}">
+                            <small class="text-muted">Separate skills with commas</small>
+                        </div>
+
+                        <!-- Experience -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Total Experience</label>
+                            <input type="text" name="experience" class="form-control" 
+                                   placeholder="e.g. Fresher, 2 Years, 5+ Years" 
+                                   th:value="${candidate.experience}">
+                        </div>
+                    </div>
+
+                    <!-- Resume Upload Section -->
+                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-file-earmark-arrow-up-fill me-2"></i>Resume Document</h5>
+                    
+                    <div class="p-3 bg-light rounded-4 border mb-4">
+                        <!-- Current Resume Status -->
+                        <div th:if="${candidate.resumePath != null && !candidate.resumePath.isBlank()}" 
+                             class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 bg-white p-3 rounded-3 border">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-file-earmark-pdf-fill text-danger fs-2 me-3"></i>
+                                <div>
+                                    <div class="fw-bold text-dark text-truncate" style="max-width: 320px;" th:text="${candidate.resumePath}">
+                                        resume_file.pdf
+                                    </div>
+                                    <small class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i>Active Resume Attached</small>
+                                </div>
+                            </div>
+                            <div>
+                                <a th:href="@{'/files/resumes/' + ${candidate.resumePath}}" target="_blank" 
+                                   class="btn btn-outline-primary btn-sm fw-semibold">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i>Preview / Download
+                                </a>
+                            </div>
+                        </div>
+
+                        <div th:if="${candidate.resumePath == null || candidate.resumePath.isBlank()}" 
+                             class="alert alert-warning py-2 mb-3 small d-flex align-items-center">
+                            <i class="bi bi-exclamation-circle-fill fs-5 me-2"></i>
+                            <div>You have not uploaded a resume yet. Upload one below to apply to jobs with a single click.</div>
+                        </div>
+
+                        <!-- Upload New / Replace File Input -->
+                        <div>
+                            <label class="form-label fw-semibold small text-muted">
+                                <span th:if="${candidate.resumePath != null && !candidate.resumePath.isBlank()}">Upload New Resume to Replace Current File</span>
+                                <span th:if="${candidate.resumePath == null || candidate.resumePath.isBlank()}">Upload Resume File</span>
+                            </label>
+                            <input type="file" name="resumeFile" class="form-control" accept=".pdf,.doc,.docx">
+                            <div class="form-text small">Accepted file types: <strong>.pdf, .doc, .docx</strong> (Maximum size: 5MB)</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top text-end">
+                        <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                            <i class="bi bi-save me-1"></i>Save Profile & Resume
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
